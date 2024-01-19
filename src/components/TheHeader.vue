@@ -59,6 +59,7 @@ import { ref, onErrorCaptured } from "vue";
 import { useForm } from "../hook/form";
 import UiInput from "./ui/UiInput.vue";
 import UiButton from "./ui/UiButton.vue";
+import addUser from "../api/addUser";
 
 const required = (val) => !!val;
 const minLength = (num) => (val) => val.length >= num;
@@ -80,9 +81,17 @@ export default {
     function submit() {
       console.log("Email:", form.email.value);
       console.log("name:", form.name.value);
-      (form.email.value = ""), (form.name.value = "");
+      addUser({ name: form.name.value, email: form.email.value }).then(
+        (res) => {
+          console.log("Created: ", res.data);
+          form.email.value = "";
+          form.name.value = "";
+        }
+      );
 
       submitted.value = true;
+      form.email.touched = false;
+      form.name.touched = false;
     }
     onErrorCaptured((e) => {
       error.value = e.message;
